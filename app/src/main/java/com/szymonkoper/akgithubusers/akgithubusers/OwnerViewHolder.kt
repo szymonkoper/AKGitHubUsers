@@ -9,6 +9,6 @@ class OwnerViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
     var owner: Owner? = null
     set(value) {
         field = value
-        view.txt_name.text = owner?.name
+        view.txt_name.text = owner?.login
     }
 }

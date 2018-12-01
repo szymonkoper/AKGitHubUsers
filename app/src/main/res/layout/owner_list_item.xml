@@ -22,7 +22,9 @@
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            tools:text="Szymcio" />
+            tools:text="some_owner_login_very_long_adsasdasdasd"
+            android:lines="1"
+            android:ellipsize="end"/>
 
     </android.support.constraint.ConstraintLayout>
 

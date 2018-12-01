@@ -20,6 +20,14 @@ class OwnerViewModel : ViewModel() {
 
     private fun loadOwners() {
         // TODO: Replace mock with async call
-        owners.value = listOf(Owner("Szymcio"), Owner("Dziku"), Owner("Janusz"))
+        owners.value = MOCKED_OWNERS
+    }
+
+    companion object {
+        val MOCKED_OWNERS = listOf(
+            Owner("szymcio", "Szymcio", "https://avatars1.githubusercontent.com/u/2790570", 12),
+            Owner("dzikidzik", "Dziku", "https://avatars1.githubusercontent.com/u/2790570", 12),
+            Owner("XjanuszX_pl", "Janusz", "https://avatars1.githubusercontent.com/u/2790570", 12)
+        )
     }
 }
