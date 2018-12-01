@@ -9,10 +9,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.szymonkoper.akgithubusers.akgithubusers.OwnerViewHolder
+import com.szymonkoper.akgithubusers.akgithubusers.model.owner.OwnerViewHolder
 import com.szymonkoper.akgithubusers.akgithubusers.R
-import com.szymonkoper.akgithubusers.akgithubusers.model.Owner
-import kotlinx.android.synthetic.main.owner_fragment.*
+import com.szymonkoper.akgithubusers.akgithubusers.model.owner.Owner
+import kotlinx.android.synthetic.main.owners_fragment.*
 
 class OwnerAdapter(val onClick: (Owner) -> Unit) : RecyclerView.Adapter<OwnerViewHolder>() {
     var owners: List<Owner> = emptyList()
@@ -36,19 +36,19 @@ class OwnerFragment : Fragment() {
         fun newInstance() = OwnerFragment()
     }
 
-    private lateinit var viewModel: OwnerViewModel
+    private lateinit var viewModel: OwnersViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.owner_fragment, container, false)
+        return inflater.inflate(R.layout.owners_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(OwnerViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(OwnersViewModel::class.java)
 
         rv_owners.layoutManager = LinearLayoutManager(context).apply { orientation = LinearLayoutManager.VERTICAL }
 
@@ -62,7 +62,7 @@ class OwnerFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(OwnerViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(OwnersViewModel::class.java)
         val owners = viewModel.getOwners()
         print(owners)
     }

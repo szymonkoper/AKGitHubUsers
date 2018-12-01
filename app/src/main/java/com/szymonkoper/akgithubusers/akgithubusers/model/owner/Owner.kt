@@ -1,4 +1,4 @@
-package com.szymonkoper.akgithubusers.akgithubusers.model
+package com.szymonkoper.akgithubusers.akgithubusers.model.owner
 
 data class Owner(
     val login: String,
