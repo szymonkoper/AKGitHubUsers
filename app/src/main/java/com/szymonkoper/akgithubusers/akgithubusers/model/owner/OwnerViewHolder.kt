@@ -16,7 +16,6 @@ class OwnerViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
             Picasso.get()
                 .load(owner?.avatarUrl)
                 .placeholder(ColorDrawable(Color.BLACK))
-                .into(view.iv_avatar);
-
+                .into(view.iv_avatar)
         }
 }
