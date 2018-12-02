@@ -3,11 +3,21 @@ package com.szymonkoper.akgithubusers.akgithubusers.ui.owner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.szymonkoper.akgithubusers.akgithubusers.api.ApiClient
 import com.szymonkoper.akgithubusers.akgithubusers.model.owner.Owner
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class OwnersViewModel : ViewModel() {
     private lateinit var owners: MutableLiveData<List<Owner>>
+
+    private val apiClient by lazy { ApiClient() }
+
+    private val viewModelJob = Job()
+
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     fun getOwners(): LiveData<List<Owner>> {
         if (!::owners.isInitialized) {
@@ -19,138 +29,13 @@ class OwnersViewModel : ViewModel() {
     }
 
     private fun loadOwners() {
-        // TODO: Replace mock with async call
-        owners.value = MOCKED_OWNERS
+        uiScope.launch {
+            owners.value = apiClient.searchOwners("szymonk")
+        }
     }
 
-    companion object {
-        val MOCKED_OWNERS = listOf(
-            Owner(
-                "szymcio",
-                "Szymcio",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "dzikidzik",
-                "Dziku",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "XjanuszX_pl",
-                "Janusz",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "szymcio",
-                "Szymcio",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "dzikidzik",
-                "Dziku",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "XjanuszX_pl",
-                "Janusz",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "szymcio",
-                "Szymcio",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "dzikidzik",
-                "Dziku",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "XjanuszX_pl",
-                "Janusz",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "szymcio",
-                "Szymcio",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "dzikidzik",
-                "Dziku",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "XjanuszX_pl",
-                "Janusz",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "szymcio",
-                "Szymcio",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "dzikidzik",
-                "Dziku",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "XjanuszX_pl",
-                "Janusz",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "szymcio",
-                "Szymcio",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "dzikidzik",
-                "Dziku",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "XjanuszX_pl",
-                "Janusz",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "szymcio",
-                "Szymcio",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "dzikidzik",
-                "Dziku",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            ),
-            Owner(
-                "XjanuszX_pl",
-                "Janusz",
-                "https://avatars1.githubusercontent.com/u/2790570",
-                12
-            )
-        )
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
     }
 }

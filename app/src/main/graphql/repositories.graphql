@@ -1,0 +1,22 @@
+query RepositoriesQuery($ownerLogin: String!) {
+  repositoryOwner(login: $ownerLogin) {
+    ... on RepositoryOwner {
+      login
+      url
+      repositories(last: 100) {
+        nodes {
+          name
+          url
+          updatedAt
+          description
+        }
+      }
+    }
+    ... on User {
+      name
+    }
+    ... on Organization {
+      name
+    }
+  }
+}

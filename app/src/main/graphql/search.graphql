@@ -1,0 +1,19 @@
+query SearchQuery($searchText: String!) {
+  search(query: $searchText, type: USER, last: 20) {
+    nodes {
+      ... on RepositoryOwner {
+        login
+        avatarUrl
+        repositories {
+          totalCount
+        }
+      }
+      ... on User {
+        name
+      }
+      ... on Organization {
+        name
+      }
+    }
+  }
+}
