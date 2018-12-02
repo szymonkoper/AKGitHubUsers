@@ -9,10 +9,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.jakewharton.rxbinding2.widget.RxTextView
 import com.szymonkoper.akgithubusers.akgithubusers.model.owner.OwnerViewHolder
 import com.szymonkoper.akgithubusers.akgithubusers.R
 import com.szymonkoper.akgithubusers.akgithubusers.model.owner.Owner
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.owners_fragment.*
+import java.util.concurrent.TimeUnit
 
 class OwnerAdapter(val onClick: (Owner) -> Unit) : RecyclerView.Adapter<OwnerViewHolder>() {
     var owners: List<Owner> = emptyList()
@@ -38,6 +42,8 @@ class OwnerFragment : Fragment() {
 
     private lateinit var viewModel: OwnersViewModel
 
+    private lateinit var queryChangeDisposable: Disposable
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,22 +58,25 @@ class OwnerFragment : Fragment() {
 
         rv_owners.layoutManager = LinearLayoutManager(context).apply { orientation = LinearLayoutManager.VERTICAL }
 
-        val adapter = OwnerAdapter { owner -> onItemClicked(owner)}
+        val adapter = OwnerAdapter { owner -> onItemClicked(owner) }
         rv_owners.adapter = adapter
-        viewModel.getOwners().observe(this, Observer {
+        viewModel.getOwners(et_query.text.toString()).observe(this, Observer {
             adapter.owners = it ?: emptyList()
-            adapter.notifyDataSetChanged()
+            adapter.notifyDataSetChanged() // TODO: Calculate diff
         })
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(OwnersViewModel::class.java)
-        val owners = viewModel.getOwners()
-        print(owners)
+        queryChangeDisposable = RxTextView.textChanges(et_query)
+            .debounce(200, TimeUnit.MILLISECONDS)
+            .map { it.toString() }
+            .subscribe { viewModel.loadOwners(it) }
     }
 
     private fun onItemClicked(owner: Owner) {
-        println("clicked on owner: ${owner.name}")
+        Toast.makeText(context, "Clicked on owner: ${owner.login}", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        queryChangeDisposable.dispose()
     }
 }

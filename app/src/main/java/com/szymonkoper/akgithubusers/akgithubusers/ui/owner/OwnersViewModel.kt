@@ -19,18 +19,18 @@ class OwnersViewModel : ViewModel() {
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    fun getOwners(): LiveData<List<Owner>> {
+    fun getOwners(loginQuery: String): LiveData<List<Owner>> {
         if (!::owners.isInitialized) {
             owners = MutableLiveData()
-            loadOwners()
+            loadOwners(loginQuery)
         }
 
         return owners
     }
 
-    private fun loadOwners() {
+    fun loadOwners(loginQuery: String) {
         uiScope.launch {
-            owners.value = apiClient.searchOwners("szymonk")
+            owners.value = apiClient.searchOwners(loginQuery)
         }
     }
 
