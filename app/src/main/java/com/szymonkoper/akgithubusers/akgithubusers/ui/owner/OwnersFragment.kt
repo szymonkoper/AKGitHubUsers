@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -18,7 +19,7 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.owners_fragment.*
 import java.util.concurrent.TimeUnit
 
-class OwnerAdapter(val onClick: (Owner) -> Unit) : RecyclerView.Adapter<OwnerViewHolder>() {
+private class OwnerAdapter(val onClick: (Owner) -> Unit) : RecyclerView.Adapter<OwnerViewHolder>() {
     var owners: List<Owner> = emptyList()
 
     override fun getItemCount() = owners.size
@@ -32,6 +33,20 @@ class OwnerAdapter(val onClick: (Owner) -> Unit) : RecyclerView.Adapter<OwnerVie
         val owner = owners[position]
         holder.owner = owner
         holder.view.setOnClickListener { onClick(owner) }
+    }
+}
+
+private class OwnersDiffCallback(val oldOwners: List<Owner>, val newOwners: List<Owner>) : DiffUtil.Callback() {
+    override fun getOldListSize() = oldOwners.size
+
+    override fun getNewListSize() = newOwners.size
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldOwners[oldItemPosition] == newOwners[newItemPosition]
+    }
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldOwners[oldItemPosition].login == newOwners[newItemPosition].login
     }
 }
 
@@ -61,8 +76,10 @@ class OwnerFragment : Fragment() {
         val adapter = OwnerAdapter { owner -> onItemClicked(owner) }
         rv_owners.adapter = adapter
         viewModel.getOwners(et_query.text.toString()).observe(this, Observer {
-            adapter.owners = it ?: emptyList()
-            adapter.notifyDataSetChanged() // TODO: Calculate diff
+            val newOwners = it ?: emptyList()
+            val diffResult = DiffUtil.calculateDiff(OwnersDiffCallback(adapter.owners, newOwners), true)
+            adapter.owners = newOwners
+            diffResult.dispatchUpdatesTo(adapter)
         })
 
         queryChangeDisposable = RxTextView.textChanges(et_query)
